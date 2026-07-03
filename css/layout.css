@@ -1,0 +1,106 @@
+/* ============================================================
+   layout.css — 페이지 골격 (상단바 · 범례 · 콘텐츠 컨테이너)
+   BEM 블록: .topbar, .legend, .content-wrap
+   ============================================================ */
+
+/* ---------- 블록: topbar (헤더) ---------- */
+.topbar {
+  position: relative;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .02), transparent);
+}
+.topbar::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent 45%);
+}
+.topbar__inner {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 18px 24px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.topbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0; /* [레이아웃 안정성] flex 자식 축소 허용 → 제목이 길어도 옆 요소를 밀지 않음 */
+}
+
+/* 로고 사각형 안의 오디오 레벨 바 애니메이션 */
+.topbar__sigil {
+  width: 34px; height: 34px;
+  flex: none;
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: var(--panel-2);
+  overflow: hidden;
+}
+.topbar__sigil-bars { display: flex; align-items: flex-end; gap: 2px; height: 16px; }
+.topbar__sigil-bars i { width: 3px; background: var(--accent); border-radius: 1px; animation: lvl 1.7s ease-in-out infinite; }
+.topbar__sigil-bars i:nth-child(1) { height: 40%;  animation-delay: 0s; }
+.topbar__sigil-bars i:nth-child(2) { height: 85%;  animation-delay: .18s; }
+.topbar__sigil-bars i:nth-child(3) { height: 60%;  animation-delay: .36s; }
+.topbar__sigil-bars i:nth-child(4) { height: 100%; animation-delay: .54s; }
+@keyframes lvl {
+  0%, 100% { transform: scaleY(.55); opacity: .8; }
+  50%      { transform: scaleY(1);   opacity: 1; }
+}
+
+.topbar__title { font-size: 19px; font-weight: 800; margin: 0; letter-spacing: .4px; line-height: 1.1; }
+.topbar__title span { color: var(--accent); }
+.topbar__subtitle {
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-top: 3px;
+  font-weight: 600;
+  /* [레이아웃 안정성] 브랜드가 늘어나도 한 줄 유지 + 말줄임 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 420px;
+}
+.topbar__meta { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.topbar__count { font-size: 12px; color: var(--muted); white-space: nowrap; font-weight: 500; }
+.topbar__count b { color: var(--accent); font-weight: 700; }
+
+/* ---------- 블록: legend (제조사 색상 범례) ---------- */
+.legend { display: flex; gap: 16px; flex-wrap: wrap; }
+.legend__item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: var(--ink-2);
+  font-weight: 500;
+  white-space: nowrap; /* [레이아웃 안정성] 제조사명 중간 개행 방지 */
+}
+.legend__dot { width: 9px; height: 9px; border-radius: 2px; }
+
+/* ---------- 블록: content-wrap (본문 컨테이너) ---------- */
+.content-wrap {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 22px 24px 80px;
+}
+
+/* ---------- 반응형: 모바일 ---------- */
+@media (max-width: 720px) {
+  .topbar__inner { padding: 14px 16px 12px; }
+  .content-wrap { padding: 16px 16px 60px; }
+  .topbar__title { font-size: 16px; }
+  .topbar__subtitle { max-width: 220px; }
+}
+@media (max-width: 480px) {
+  .content-wrap { padding: 12px 12px 50px; }
+}

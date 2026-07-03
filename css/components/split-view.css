@@ -1,0 +1,94 @@
+/* ============================================================
+   split-view.css — 나란히 비교 Split View
+   BEM 블록: .split-view (모달 내부에 생성되는 2분할 컨테이너)
+   동작 제어: js/ui/split-view.js
+
+   [레이아웃 철학] 이전 버전은 pane1/pane2 를 flex: 1 1 50% 로 반씩 나누고
+   모달 max-width 를 transition 시켰다 — 그 결과 pane1(원래 있던 모달
+   콘텐츠)의 폭이 600px→약 550px 로 갑자기 줄면서 폰트·표 열 폭이 순간
+   재배치(리플로우)돼 전환이 어색해 보였다. 지금은 pane1 을 원래 모달과
+   동일한 고정 폭(--pane1-w)으로 완전히 고정해 pane1 내부는 절대 리사이즈
+   되지 않고, pane2 만 그 오른쪽에 별도 고정 폭(--pane2-w) 패널로 붙어
+   나타나거나 사라진다(폭 애니메이션 + 페이드, 왼쪽은 고정된 채 오른쪽만
+   등장/퇴장하는 느낌). 모달 전체 폭은 pane1+pane2 의 합으로만 변한다.
+   ============================================================ */
+
+:root {
+  --pane1-w: 600px; /* modal.css 의 .modal max-width 와 동일하게 유지 */
+  --pane2-w: 560px;
+}
+
+/* 모달 변경자: Split View 확장 상태 — 폭은 pane1(고정) + pane2(고정) 합 */
+.modal--split { max-width: calc(var(--pane1-w) + var(--pane2-w)); }
+
+/* ---------- 블록: split-view ---------- */
+.split-view { display: flex; align-items: stretch; width: 100%; }
+
+/* [레이아웃 통일] pane 자체는 padding 을 갖지 않는다 — 내부의
+   .modal__head/.modal__body(modal.css)가 원래 모달과 동일한 padding을
+   각자 담당하므로, pane1(기존 모달)과 pane2(Split View 로 새로 여는 상세)
+   가 완전히 같은 여백·헤더 레이아웃을 갖는다(좌우 X 버튼이 항상 각 pane
+   우측 상단 끝에서 동일한 오프셋에 위치, 제목도 eyebrow+큰 제목 2단 구조로
+   통일). 이전에는 pane 자체에도 padding 을 줘서 .modal__head 의 padding과
+   이중으로 겹치거나, pane2 만 별도의 축소된 헤더를 써서 두 pane 이 서로
+   다르게 보였다. */
+.split-view__pane {
+  min-width: 0; /* [레이아웃 안정성] flex 자식 축소 허용 — 내부 표/말줄임의 전제 조건 */
+  position: relative;
+}
+/* pane1(기존 모달 콘텐츠) — 폭 고정, 절대 리사이즈되지 않음 */
+.split-view__pane:first-child { flex: 0 0 var(--pane1-w); }
+/* pane2(Split View 로 새로 여는 상세) — 별도 고정 폭, 등장/퇴장만 담당 */
+.split-view__pane:nth-child(2) { flex: 0 0 var(--pane2-w); }
+.split-view__pane + .split-view__pane { border-left: 1px solid var(--line); }
+
+/* pane 내부에서는 제품 이미지 영역만 살짝 축소된 스케일로 보인다 */
+.split-view__pane .modal__media { height: 140px; margin: 0 0 16px; border-radius: 10px; border: 1px solid var(--line); }
+.split-view__pane .modal__media img { max-height: 110px; }
+/* pane2 폭이 약간 좁으므로 Type/Crossover 요약 태그도 살짝 축소 */
+.split-view__pane .modal__title-tag { padding: 2px 7px; font-size: 9.5px; }
+
+/* [레이아웃 안정성] pane2 는 고정 560px 폭(패딩 제외 약 510px)으로, 기존
+   모달 본문 폭(패딩 제외 약 550px)과 큰 차이가 없어 match-table(6열)도
+   .modal__title(28px) 을 포함해 모달과 동일한 폰트 크기로 그대로 들어간다. */
+
+/* 그래도 폭이 부족한 좁은 화면(모바일 세로 스택 전 전환 구간)에서는
+   Links/ch·Max/amp 열을 접어 Amplifier·Mode·Preset·Max SPL 4개 핵심
+   정보만 온전히 보여준다. */
+@media (max-width: 1080px) {
+  .split-view__pane .match-table__cell { padding: 8px 6px; font-size: 11px; }
+  .split-view__pane .match-table__row--head .match-table__cell { font-size: 8px; letter-spacing: .02em; }
+  .split-view__pane .spec-table__key { font-size: 8.5px; }
+  .split-view__pane .spec-table__value { font-size: 12.5px; }
+  .split-view__pane .match-table__row { grid-template-columns: 1.3fr .8fr 1fr 0 0 .8fr; }
+  .split-view__pane .match-table__cell:nth-child(4),
+  .split-view__pane .match-table__cell:nth-child(5) { padding: 0; overflow: hidden; border-left: none; }
+}
+
+/* 변경자: pane2 진입 애니메이션 — pane1 은 폭이 고정이라 전혀 움직이지
+   않으므로, pane2 만 모달 확장(.modal--split 의 max-width transition,
+   modal.css 에서 .22s) 이 끝난 직후 제자리에서 부드럽게 페이드인 되도록
+   지연(delay)을 모달 확장 시간과 맞춘다. 좌우로 미끄러지는 translateX 는
+   폭이 고정된 패널이 "밀고 들어오는" 듯한 인상을 줘 오히려 어색해서 순수
+   페이드+살짝의 확대(scale)만 사용 — 오른쪽 패널이 자연스럽게 나타나는 느낌. */
+.split-view__pane--enter {
+  animation: split-in .22s ease both;
+  animation-delay: .2s;
+  opacity: 0; /* delay 동안 애니메이션 시작 전 상태 — 깜빡임 방지 */
+}
+@keyframes split-in {
+  from { opacity: 0; transform: scale(.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- 반응형: 좁은 화면에서는 세로 스택 ----------
+   세로 스택에서는 pane1/pane2 가 폭이 아니라 높이로 쌓이므로, 데스크탑의
+   고정 폭(--pane1-w/--pane2-w)을 그대로 두면 좁은 화면 폭을 넘쳐 가로
+   스크롤이 생긴다 — 두 pane 모두 폭 100%(auto)로 되돌린다. */
+@media (max-width: 860px) {
+  .modal--split { max-width: 600px; }
+  .split-view { flex-direction: column; }
+  .split-view__pane:first-child,
+  .split-view__pane:nth-child(2) { flex: 1 1 auto; }
+  .split-view__pane + .split-view__pane { border-left: none; border-top: 1px solid var(--line); }
+}

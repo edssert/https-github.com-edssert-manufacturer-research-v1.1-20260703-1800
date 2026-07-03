@@ -1,0 +1,42 @@
+/* ============================================================
+   tokens.css — 디자인 토큰 (CSS 변수)
+   모든 색상·서체·라운딩 값은 여기서만 정의한다.
+   다른 CSS 파일과 JS(schema의 color 필드)는 var(--이름)로만 참조.
+   ============================================================ */
+:root {
+  /* 배경/패널 (어두운 순 → 밝은 순) */
+  --bg: #0E1116;
+  --panel: #161A21;
+  --panel-2: #1E232B;
+  --panel-3: #252B34;
+
+  /* 경계선 */
+  --line: #2A313B;
+  --line-2: #343C47;
+
+  /* 텍스트 (진한 순 → 흐린 순) */
+  --ink: #EAEDF1;
+  --ink-2: #B9C0CA;
+  --muted: #868F9C;
+  --muted-2: #5E6672;
+
+  /* 포인트 컬러 (앰버) */
+  --accent: #FFB020;
+  --accent-ink: #0E1116;          /* 포인트 배경 위 텍스트색 */
+  --accent-dim: rgba(255, 176, 32, .14);
+  --accent-line: rgba(255, 176, 32, .40);
+
+  /* 제조사 식별 컬러 — speakers.schema.js / amplifiers.schema.js 의 MFR 맵에서 참조 */
+  --la: #CBD2D9;   /* L-Acoustics */
+  --db: #E4443B;   /* d&b audiotechnik */
+  --my: #4C9BE0;   /* Meyer Sound */
+
+  /* 도메인 식별 컬러 */
+  --dsp: #8B7FE8;
+  --sw: #3FBF8F;
+  --brand: #F0A63A;
+
+  /* 공통 형태 */
+  --radius: 12px;
+  --sans: 'Pretendard', 'Pretendard Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}

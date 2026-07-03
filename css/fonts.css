@@ -1,0 +1,33 @@
+/* ============================================================
+   fonts.css — 로컬 웹폰트 정의 (Pretendard)
+   assets/fonts/ 의 woff2 파일을 로드한다. 파일이 없으면
+   tokens.css --sans 의 system-ui 폴백으로 자연스럽게 대체됨.
+   ============================================================ */
+@font-face {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/Pretendard-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../assets/fonts/Pretendard-SemiBold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../assets/fonts/Pretendard-Bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('../assets/fonts/Pretendard-ExtraBold.woff2') format('woff2');
+}

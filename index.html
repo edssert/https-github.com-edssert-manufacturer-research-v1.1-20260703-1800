@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Manufacturer Research</title>
+
+<!-- CSS 로드 순서: 토큰(변수) → 폰트 → 리셋 → 레이아웃 → 컴포넌트 -->
+<link rel="stylesheet" href="css/tokens.css" />
+<link rel="stylesheet" href="css/fonts.css" />
+<link rel="stylesheet" href="css/base.css" />
+<link rel="stylesheet" href="css/layout.css" />
+<link rel="stylesheet" href="css/nav.css" />
+<link rel="stylesheet" href="css/components/controls.css" />
+<link rel="stylesheet" href="css/components/card.css" />
+<link rel="stylesheet" href="css/components/spec-table.css" />
+<link rel="stylesheet" href="css/components/modal.css" />
+<link rel="stylesheet" href="css/components/split-view.css" />
+<link rel="stylesheet" href="css/components/brand.css" />
+</head>
+<body>
+
+<!-- 상단바: 로고 + 부제(브랜드 목록, JS 주입) + 범례/카운트 -->
+<header class="topbar">
+  <div class="topbar__inner">
+    <div class="topbar__brand">
+      <div class="topbar__sigil"><div class="topbar__sigil-bars"><i></i><i></i><i></i><i></i></div></div>
+      <div>
+        <h1 class="topbar__title">Manufacturer <span>//</span> Research</h1>
+        <div class="topbar__subtitle" id="brand-subtitle"></div>
+      </div>
+    </div>
+    <div class="topbar__meta">
+      <div class="legend" id="legend"></div>
+      <div class="topbar__count" id="count"></div>
+    </div>
+  </div>
+</header>
+
+<!-- 도메인 탭 (js/ui/nav.js 가 렌더링) -->
+<nav class="topnav" id="topnav" role="tablist"></nav>
+
+<!-- 도메인별 뷰 컨테이너: 각 controller 가 자기 뷰를 1회 빌드 후 hidden 토글 -->
+<main id="domain-views">
+  <div id="view-speakers" hidden></div>
+  <div id="view-amplifiers" hidden></div>
+  <div id="view-dsps" hidden></div>
+  <div id="view-software" hidden></div>
+  <div id="view-brand" hidden></div>
+</main>
+
+<footer class="app-footer">ARRAY // INDEX &nbsp;·&nbsp; modular build</footer>
+
+<!-- 카드형 상세 모달 (js/ui/modal.js 가 제어) -->
+<div class="modal-overlay" id="modalbg" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

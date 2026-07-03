@@ -1,0 +1,107 @@
+/* ============================================================
+   brand.css — 브랜드 탭 (카드가 아닌 전체 폭 스택 페이지) + 연혁 타임라인
+   BEM 블록: .brand-list, .brand-page, .timeline
+   마크업 생성: js/domains/brand/brand.view.js
+   --mfr 변수: 브랜드 색상이 섹션별 인라인으로 주입됨
+   ============================================================ */
+
+/* ---------- 블록: brand-list (브랜드 섹션 세로 스택) ---------- */
+.brand-list { display: flex; flex-direction: column; gap: 0; }
+
+/* ---------- 블록: brand-page (브랜드 1개의 전체 섹션) ---------- */
+.brand-page { border-bottom: 1px solid var(--line); padding: 44px 0; }
+.brand-page:first-child { padding-top: 8px; }
+.brand-page:last-child { border-bottom: none; }
+
+.brand-page__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.brand-page__title { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.brand-page__eyebrow {
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--mfr, var(--muted));
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.brand-page__dot { width: 8px; height: 8px; border-radius: 2px; background: var(--mfr, var(--muted)); flex: none; }
+.brand-page__name {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  line-height: 1.1;
+  margin: 0;
+  overflow-wrap: break-word; /* [레이아웃 안정성] 긴 브랜드명 강제 개행 허용 */
+}
+.brand-page__meta { font-size: 13px; color: var(--ink-2); display: flex; gap: 16px; flex-wrap: wrap; }
+.brand-page__meta span { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.brand-page__meta b { color: var(--ink); font-weight: 700; }
+
+/* 본문: 좌(연혁 타임라인) / 우(개요+주요 제품) 2열 */
+.brand-page__body {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 40px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .brand-page__body { grid-template-columns: 1fr; }
+}
+
+.brand-page__notes { font-size: 14px; line-height: 1.7; color: var(--ink-2); }
+.brand-page__notable { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }
+.brand-page__notable-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.brand-page__notable-item::before {
+  content: "";
+  flex: none;
+  width: 6px; height: 6px;
+  border-radius: 1px;
+  background: var(--mfr, var(--accent));
+  margin-top: 6px;
+}
+
+/* ---------- 블록: timeline (점-선 연결 세로 타임라인) ---------- */
+.timeline { position: relative; padding-left: 28px; }
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 5px; top: 6px; bottom: 6px;
+  width: 2px;
+  background: linear-gradient(180deg, var(--mfr, var(--accent)) 0%, var(--line-2) 100%);
+}
+.timeline__item { position: relative; padding-bottom: 26px; }
+.timeline__item:last-child { padding-bottom: 0; }
+.timeline__item::before {
+  content: "";
+  position: absolute;
+  left: -28px; top: 3px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--mfr, var(--accent));
+  box-shadow: 0 0 0 3px var(--panel);
+}
+.timeline__year {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--mfr, var(--accent));
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .02em;
+  margin-bottom: 3px;
+}
+.timeline__event { font-size: 13.5px; color: var(--ink-2); line-height: 1.55; }

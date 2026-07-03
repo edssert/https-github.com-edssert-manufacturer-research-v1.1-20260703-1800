@@ -1,0 +1,67 @@
+/* ============================================================
+   nav.css — 상단 탭 내비게이션 (도메인 전환)
+   BEM 블록: .topnav
+   마크업 생성: js/ui/nav.js
+   ============================================================ */
+.topnav {
+  position: relative;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+.topnav__inner {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;           /* 좁은 화면: 탭 가로 스크롤 */
+  scrollbar-width: none;
+}
+.topnav__inner::-webkit-scrollbar { display: none; }
+
+.topnav__tab {
+  position: relative;
+  flex: none;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  padding: 14px 18px 12px;
+  cursor: pointer;
+  transition: color .15s;
+  white-space: nowrap;        /* [레이아웃 안정성] 탭 라벨 개행 방지 */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.topnav__tab:hover { color: var(--ink-2); }
+.topnav__tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 4px; }
+
+.topnav__tab-count {
+  font-size: 10.5px;
+  color: var(--muted-2);
+  font-variant-numeric: tabular-nums;
+  background: var(--panel-3);
+  border-radius: 999px;
+  padding: 1px 7px;
+  font-weight: 600;
+}
+
+/* 상태 변경자: 활성 탭 */
+.topnav__tab--active { color: var(--accent); }
+.topnav__tab--active .topnav__tab-count { color: var(--accent-ink); background: var(--accent); }
+.topnav__tab--active::after {
+  content: "";
+  position: absolute;
+  left: 10px; right: 10px; bottom: 0;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px 2px 0 0;
+}
+
+@media (max-width: 720px) {
+  .topnav__tab { padding: 12px 14px 10px; font-size: 12.5px; }
+}

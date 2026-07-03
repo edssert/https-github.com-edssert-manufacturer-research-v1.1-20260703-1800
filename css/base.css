@@ -1,0 +1,56 @@
+/* ============================================================
+   base.css — 리셋 + 전역 규칙
+   개별 컴포넌트 스타일은 넣지 않는다 (components/ 참조).
+   ============================================================ */
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+/* [레이아웃 안정성] 탭마다 콘텐츠 높이가 달라 세로 스크롤바가 생겼다
+   사라졌다 하는데, 스크롤바 유무는 뷰포트의 실제 사용 가능 폭에 영향을
+   준다 — 스크롤바가 없을 땐 폭이 넓어져 중앙 정렬된 max-width 컨테이너
+   (.app-footer, .content-wrap 등)가 몇 px 오른쪽으로 밀리고, 스크롤바가
+   생기면 다시 왼쪽으로 당겨지는 식으로 탭 전환마다 사이트 전체가 좌우로
+   미세하게 흔들려 보였다. 스크롤바 자리를 항상 고정 확보해(콘텐츠가
+   짧아 스크롤이 필요 없을 때도 빈 여백으로 유지) 이 흔들림을 없앤다. */
+html {
+  scrollbar-gutter: stable;
+  overflow-y: scroll; /* [폴백] scrollbar-gutter 미지원 브라우저에서도 스크롤바를 항상 표시해 폭 흔들림 방지 */
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(255, 176, 32, .05), transparent 60%),
+    var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+  /* [레이아웃 안정성] 한국어 단어 중간 줄바꿈 방지 + 긴 영문 토큰은 강제 개행.
+     텍스트 길이가 달라져도 어절 단위로만 줄이 바뀌어 UI가 자연스럽게 유지된다. */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+a { color: inherit; }
+
+::selection { background: var(--accent); color: var(--accent-ink); }
+
+/* 앱 푸터 */
+.app-footer {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 24px 40px;
+  color: var(--muted-2);
+  font-size: 11px;
+  letter-spacing: .02em;
+  font-weight: 500;
+}
+
+/* 접근성: 시스템의 모션 최소화 설정을 존중 */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}

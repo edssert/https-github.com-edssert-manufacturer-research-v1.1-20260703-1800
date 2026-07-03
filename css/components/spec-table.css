@@ -1,0 +1,324 @@
+/* ============================================================
+   spec-table.css — 모달 내부 사양 표 · 앰프 매칭 표 · 보조 텍스트
+   BEM 블록: .spec-table, .freq-list, .freq-badge, .match-table,
+             .section-label, .data-empty-note, .footnote, .hint-text
+   마크업 생성: 각 도메인 *.view.js 의 modalBodyHTML()
+   ============================================================ */
+
+/* ---------- 블록: spec-table (키-값 2열 사양 표) ---------- */
+/* [레이아웃 안정성] 1fr 1fr 고정 2열 그리드 — 값 길이와 무관하게 열 폭 균등.
+   배경색 1px gap 트릭으로 셀 구분선을 그린다. */
+.spec-table {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.spec-table__cell {
+  background: var(--panel);
+  padding: 12px 14px;
+  min-width: 0; /* [레이아웃 안정성] grid 자식 축소 허용 */
+  min-height: 56px; /* [레이아웃 안정성] 값 길이(1줄 vs 2줄)와 무관하게 행 높이 최소치 고정 */
+  box-sizing: border-box;
+}
+/* 변경자: 두 열 전체를 차지하는 셀 (Transducers, Dimensions 등 긴 항목) */
+.spec-table__cell--full { grid-column: 1 / -1; }
+.spec-table__key {
+  font-size: 9.5px;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.spec-table__value {
+  font-size: 13.5px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+  /* [레이아웃 안정성] 한국어는 어절 단위 개행, 긴 영문 토큰은 강제 개행 */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+/* Weight 값이 없을 때(--na) muted 처리 — 다른 spec 값과 톤 구분 */
+.spec-table__value--na { color: var(--muted); }
+
+/* Dimensions 키 옆 "(W×H×D)" 순서 안내 — 원본 데이터가 단위 표기만 있고
+   축 순서를 명시하지 않아 오독 소지가 있어 추가. 키보다 한 단계 옅은
+   색으로 보조 정보임을 표시하고, letter-spacing 은 상속하지 않아(normal)
+   괄호·× 기호가 벌어져 보이지 않게 한다. */
+.spec-table__key-hint {
+  color: var(--muted-2);
+  letter-spacing: normal;
+  text-transform: none;
+  font-weight: 500;
+}
+
+
+/* Dimensions 행의 "키 + mm/in 토글" 한 줄 배치 — 토글이 키 라벨과 세로
+   중앙 정렬되도록 flex 사용 (다른 spec-table__key 는 margin-bottom 만
+   있는 block 이라 별도 규칙 필요). */
+.spec-table__key-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+.spec-table__key-row .spec-table__key { margin-bottom: 0; }
+/* mm/in 토글 — 모달 뷰 전환 버튼(.modal__view-switch/.modal__view-btn)과
+   동일한 시각 언어(캡슐 배경 없는 텍스트 버튼 + active 시 강조색 배경)를
+   재사용하되, spec-table 셀 안에 들어가는 작은 크기로 축소했다. */
+.dims-unit-switch {
+  display: flex;
+  gap: 1px;
+  flex-shrink: 0;
+}
+.dims-unit-btn {
+  appearance: none;
+  border: 1px solid transparent; /* [레이아웃 안정성] active 시 border 가 생겨도 크기가 안 흔들리게 기본에도 투명 border 확보 */
+  background: transparent;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.dims-unit-btn:hover { color: var(--ink-2); }
+/* [가독성] modal__view-btn.is-active 와 동일한 이유로 배경을 어두운
+   --panel-3 로 고정하고 글자·테두리만 제조사색으로 강조한다 — 밝은
+   제조사색(L-Acoustics 등)에서도 항상 대비가 확보된다. */
+.dims-unit-btn.is-active {
+  background: var(--panel-3);
+  color: var(--mfr, var(--accent));
+  border-color: var(--mfr, var(--accent));
+}
+
+/* ---------- 블록: freq-list (주파수 응답 목록) ---------- */
+/* [레이아웃 안정성] grid 2열(배지 고정폭 · 값 가변폭) — 배지 텍스트 길이가
+   "-3 dB"/"-10 dB"처럼 달라도 배지 폭과 값 시작 x좌표가 행마다 항상 동일. */
+.freq-list { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; }
+.freq-list__row { display: contents; font-size: 13px; }
+.freq-list__val { align-self: center; }
+
+/* ---------- 블록: freq-badge (-3dB/-6dB 등 소형 배지) ---------- */
+.freq-badge {
+  display: inline-block;
+  width: 48px; /* [레이아웃 안정성] "-10 dB"(가장 긴 라벨) 기준 고정 폭 — 모든 배지 크기 동일 */
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: .04em;
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-line);
+  border-radius: 4px;
+  padding: 1px 5px;
+  text-align: center;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+/* 변경자: 자동 폭 (크로스오버 태그처럼 내용 길이에 맞춤) */
+.freq-badge--auto { width: auto; }
+
+/* ---------- 블록: section-label (모달 섹션 제목) ---------- */
+.section-label {
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+
+/* ---------- 블록: match-table (앰프 매칭/설정 표) ---------- */
+.match-table {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  font-variant-numeric: tabular-nums;
+}
+/* [레이아웃 안정성] 고정 비율 컬럼 그리드 — 셀 내용 길이가 달라도 컬럼 폭 불변.
+   6열(기본, 변형자 없음): Speaker/Amplifier · Mode · Preset · Links/ch ·
+   Max/amp · Max SPL — 스피커 모달의 Amplifier Matching 표(ampMatchingHTML)와
+   앰프 모달의 Configurations 표(configsBySpeakerTableHTML, LA1.16i 등 앰프
+   자체 configs 가 비어있을 때)가 왼쪽 열 라벨만 바꿔 공유한다.
+   3열 변형(--cols-3): Mode · Links/ch · Max/amp (앰프 모달의 설정 표 — 앰프
+   자체 configs 필드가 채워진 경우, 모델명 고정이라 SPL/Preset 없이 간략히) */
+.match-table__row {
+  display: grid;
+  /* 컬럼 비율 근거(전 데이터 실측, speakers/data/**):
+     - Amplifier: "D40 / D80 / D90 / 40D" 병합 표기를 모델별 개별 행으로
+       분리한 뒤(cl-series.data.js) 최장 모델명이 "LA1.16i"(7자)로 짧아져
+       폭을 더 줄일 여유가 생김.
+     - Mode/Preset: "[SYVA LOW_100]"/"[KARA II 70]" 등 프리셋명이 가장 긴
+       콘텐츠이므로 남는 폭을 여기에 배분.
+     - Links/ch: 실측 최댓값 1자리(6) — 값 자체는 좁아도 되지만 헤더 라벨
+       "LINKS/CH"가 더 넓음.
+     - Max/amp: 실측 최댓값 2자리(64) — 헤더 라벨 "MAX/AMP" 기준 폭 결정.
+     - Max SPL: 실측 최댓값 3자리+" dB"(160 dB) — 헤더 라벨 "MAX SPL" 기준.
+     Links/ch·Max/amp·Max SPL 은 값이 짧아도 헤더 라벨 길이가 실질적 하한이라
+     너무 좁히면 헤더가 잘린다(letter-spacing 을 이미 좁혀둔 상태). */
+  grid-template-columns: .85fr .68fr 1.35fr .68fr .68fr .7fr;
+  min-height: 38px; /* [레이아웃 안정성] 셀 내용 유무와 무관하게 행 높이 고정 */
+  align-items: center; /* [레이아웃 안정성] 셀 내용 길이와 무관하게 항상 수직 중앙 정렬 */
+}
+/* [hidden] 속성 지원 — .match-table__row 의 display:grid 가 브라우저 기본
+   [hidden]{display:none} 규칙보다 우선 적용돼 숨김이 무시되는 문제를 방지
+   (Configurations 표의 접기/펼치기, match-table__row--sub 가 이 속성으로
+   숨겨짐). 반드시 위 .match-table__row 규칙 뒤에 와야 우선한다. */
+.match-table__row[hidden] { display: none; }
+.match-table--cols-3 .match-table__row { grid-template-columns: 1fr .8fr .8fr; }
+/* 변경자: match-table--amp-view (앰프 모달의 Configurations 표,
+   configsBySpeakerTableHTML) — 기본 6열 비율은 왼쪽 열이 앰프 모델명
+   (짧다, 최장 "LA1.16i" 7자) 기준으로 좁게 잡혀 있는데, 이 표는 왼쪽 열에
+   스피커 모델명이 들어가 더 길다(전 데이터 실측 최장 "A15 Focus" 9자,
+   "Syva Low"/"Syva Sub"/"A10 Wide" 등 8자대가 다수) — 그대로 쓰면
+   "S...", "5..." 처럼 잘린다. Speaker 열을 넓히고 그만큼 Preset 열에서
+   가져와 균형을 맞춘다(Mode·Links/ch·Max/amp·Max SPL 은 헤더 라벨 길이가
+   하한이라 기존 폭 유지). */
+.match-table--amp-view .match-table__row { grid-template-columns: 1.3fr .68fr .9fr .68fr .68fr .7fr; }
+.match-table__row + .match-table__row { border-top: 1px solid var(--line); }
+/* 변경자: 헤더 행 — Links/ch·Max/amp·Max SPL 처럼 슬래시가 들어간 라벨이
+   좁은 열 폭에서 "LINKS/..."/"MAX/A..."로 잘리지 않도록 letter-spacing 을
+   좁혀 여유를 확보 */
+.match-table__row--head { background: var(--panel-3); }
+.match-table__row--head .match-table__cell {
+  font-size: 9px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+}
+/* 변경자: 클릭 가능 행 (현재 앰프 DB에 등록된 모델 — Split View 로 상세를 여는 행).
+   필터 칩처럼 "선택 가능"함을 분명히 보여주기 위해 모델명 셀에 화살표(›)를
+   추가하고, 클릭 불가 행은 모델명 색을 muted 로 낮춰 상대적으로 비활성처럼
+   보이게 한다(행 자체는 지우지 않음 — 과거 앰프 모델 정보는 유지). */
+.match-table__row--clickable { cursor: pointer; transition: background .15s; }
+.match-table__row--clickable:hover { background: var(--accent-dim); }
+.match-table__row--clickable .match-table__cell--model::after {
+  content: "›";
+  display: inline-block;
+  margin-left: 5px;
+  color: var(--accent);
+  font-weight: 700;
+  opacity: .7;
+}
+.match-table__row--clickable:hover .match-table__cell--model::after { opacity: 1; }
+/* 변경자: 클릭 불가 행 (매칭 정보는 있으나 현재 앰프 DB에 없는 모델 — 예: 단종/구형) */
+.match-table__row--static { cursor: default; }
+.match-table__row--static .match-table__cell--model { color: var(--muted); font-weight: 600; }
+
+/* ---------- 변경자: match-table--toggleable (스피커별 대표 행 + 접기/펼치기) ----------
+   앰프 모달의 Configurations 표(configsBySpeakerTableHTML)처럼 스피커 1개당
+   모드×프리셋 조합이 여러 행일 때, 대표 행(Max/amp 최댓값) 1개만 기본 노출하고
+   나머지는 별도 토글 버튼(+N)으로 펼쳐지는 하위 행(--sub)으로 숨겨둔다.
+   스피커 이름 반복 없이 표를 짧게 요약하고, 필요할 때만 모드/프리셋별
+   상세를 볼 수 있게 하기 위함. 스피커 이름(모델 셀) 클릭은 항상 Split
+   View 이동으로 남겨두고, +N 버튼만 펼치기를 담당하도록 클릭 영역을
+   분리해 두 동작이 겹치지 않게 한다(연결은 controller 의
+   wireAmpModalSpeakerClicks/wireAmpConfigsToggle 가 담당). */
+.match-table__row--sub .match-table__cell--mode,
+.match-table__row--sub .match-table__cell--preset { color: var(--muted-2); }
+.match-table__row--sub { background: var(--panel-2); }
+/* 대표 행에 남은 설정 개수(+N)를 보여주는 토글 버튼 — 펼치면 라벨이 "−"로 바뀜.
+   [레이아웃 안정성] "+1"~"+9"(1자리)든 "+10" 이상(2자리)이든 폭이 흔들리지
+   않도록 min-width 로 고정 폭을 보장하고 내용은 중앙 정렬한다. */
+.match-table__toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 26px;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  background: var(--panel-3);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+}
+.match-table__toggle-btn:hover { color: var(--accent); border-color: var(--accent-line); }
+.match-table__toggle-btn[aria-expanded="true"] { color: var(--accent); border-color: var(--accent-line); }
+
+.match-table:not(.match-table--toggleable) .match-table__body .match-table__row:nth-child(even) { background: var(--panel-2); }
+
+.match-table__cell {
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--ink);
+  /* [레이아웃 안정성] 셀 내용 말줄임 — 행 높이/컬럼 폭 고정 유지 */
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.match-table__cell + .match-table__cell { border-left: 1px solid var(--line); }
+/* 변경자: 모델명/모드/프리셋 열 (클릭 가능 행은 accent, 클릭 불가 행은 위
+   .match-table__row--static 규칙이 muted 로 덮어씀)
+   [레이아웃 안정성] 모델 셀을 flex 로 바꿔 이름 텍스트 길이(SB10i vs Soka
+   vs X6i 등)와 무관하게 뒤에 붙는 +N 토글 배지·› 화살표가 항상 셀 오른쪽
+   끝에 "함께 붙어서" 정렬되게 한다 — space-between 대신 이름에
+   margin-right:auto 를 줘서, 아이템이 2개(이름+화살표)든 3개(이름+토글
+   배지+화살표)든 배지/화살표가 항상 나란히 오른쪽 끝에 모이고 중간에
+   벌어지지 않는다. 이름이 길면 이름 쪽만 말줄임(ellipsis)된다. */
+.match-table__cell--model {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent);
+  font-weight: 700;
+}
+.match-table__cell--model > :first-child {
+  margin-right: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.match-table__cell--mode { color: var(--ink-2); font-weight: 500; }
+.match-table__cell--preset { color: var(--muted); font-size: 11.5px; }
+
+/* ---------- 보조 텍스트 블록 ---------- */
+/* 데이터 미입력 안내 박스 */
+.data-empty-note {
+  padding: 14px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+/* 표 아래 각주 (출처/용어 설명) */
+.footnote { font-size: 11px; color: var(--muted-2); margin-top: 10px; line-height: 1.5; }
+/* 인라인 힌트 문구 ("매칭된 스피커가 없습니다" 등) */
+.hint-text { font-size: 11px; color: var(--muted-2); }
+
+/* ---------- 반응형: 모바일 ---------- */
+/* [레이아웃 안정성] 좁은 화면에서 spec-table 을 1열로 바꿔 값이 눌려 줄바꿈이
+   과도하게 늘어나는 것을 방지 — 열 폭이 아닌 열 "개수"로 대응한다. */
+@media (max-width: 480px) {
+  .spec-table { grid-template-columns: 1fr; }
+  .spec-table__cell--full { grid-column: 1 / -1; }
+  /* Links/ch · Max/amp 열(4·5번째) 폭을 0으로 접어 부차 정보를 숨기되,
+     셀 순서(모델·모드·프리셋·…·Max SPL)는 그대로 유지한다. */
+  .match-table__row { grid-template-columns: 1.2fr .85fr 1.1fr 0 0 .85fr; }
+  .match-table__cell:nth-child(4),
+  .match-table__cell:nth-child(5) { padding: 0; overflow: hidden; border-left: none; }
+}
